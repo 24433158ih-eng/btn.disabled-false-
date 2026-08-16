@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly Cash 🚀 টাকা উড়াও 💸 - Home</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        function navTo(url) {
+            // Check if user is authenticated before navigating
+            const isAuthenticated = "false" === "true";
+            if (!isAuthenticated && tg.initData) {
+                // Try to authenticate one last time before redirecting
+                authenticateUser(tg.initData).then(success => {
+                    window.location.href = url;
+                });
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        async function authenticateUser(initData) {
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': 'tsVULnBVjUf2BOgF7rsTwwp9SyKpyrb0w3hBUBqZZWVQbHeljCFAE43qDEXdsYR5'
+                    },
+                    body: JSON.stringify({ initData: initData })
+                });
+                const data = await response.json();
+                return data.status === 'success';
+            } catch (err) {
+                console.error('Auth error:', err);
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAuthenticated = "false" === "true";
+            
+            // Auto-authenticate if not authenticated and in Telegram
+            if (!isAuthenticated && tg.initData) {
+                authenticateUser(tg.initData).then(success => {
+                    if (success) {
+                        // If we are on the home page with a 'next' parameter, redirect there
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const next = urlParams.get('next');
+                        if (next) {
+                            window.location.href = next;
+                        } else if (window.location.pathname === '/') {
+                            window.location.reload();
+                        }
+                    } else {
+                        console.error('Telegram authentication failed.');
+                    }
+                });
+            }
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #0A192F;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .gradient-blue {
+            background: linear-gradient(135deg, #0A192F 0%, #00E5FF 100%);
+        }
+        
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button.active {
+            color: #00E5FF;
+        }
+        
+        .nav-button.active svg {
+            color: #00E5FF;
+            transform: translateY(-2px);
+        }
+
+        .nav-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-icon {
+            width: 2rem;
+            height: 2rem;
+            color: #00E5FF;
+        }
+        .stat-card {
+            background: #112240;
+            border: 1px solid #233554;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: #00E5FF;
+            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A192F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #233554;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00E5FF;
+        }
+    </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TY0KVP2E8L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TY0KVP2E8L');
+</script>
+
+    
+<style>
+    #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at center, #112240 0%, #0A192F 100%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+    }
+
+    #loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 320px;
+        padding: 20px;
+    }
+
+    .logo-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 40px;
+    }
+
+    .dashed-circle {
+        position: absolute;
+        inset: -10px;
+        border: 2px dashed #00E5FF;
+        border-radius: 50%;
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .main-logo {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0A192F 0%, #00E5FF 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0, 229, 255, 0.3);
+        z-index: 2;
+        position: relative;
+    }
+
+    .main-logo svg {
+        width: 60px;
+        height: 60px;
+        color: white;
+    }
+
+    .brand-name {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #00E5FF;
+        margin-bottom: 4px;
+        letter-spacing: -1px;
+    }
+
+    .brand-slogan {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 60px;
+    }
+
+    .progress-card {
+        background: #112240;
+        width: 100%;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        border: 1px solid #233554;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 16px;
+    }
+
+    /* Loading state spinner */
+    .loading { position: relative; pointer-events: none; }
+    .loading::after {
+        content: '';
+        width: 16px; height: 16px;
+        border: 2px solid #fff; border-top-color: transparent;
+        border-radius: 50%;
+        position: absolute; right: 16px; top: 50%;
+        transform: translateY(-50%);
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .status-labels {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .status-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #a855f7;
+        text-transform: uppercase;
+    }
+
+    .percent-text {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #1e293b;
+        line-height: 1;
+    }
+
+    .progress-bar-bg {
+        width: 100%;
+        height: 12px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #6366f1, #a855f7);
+        border-radius: 10px;
+        transition: width 0.1s ease-out;
+    }
+
+    .loader-footer {
+        position: absolute;
+        bottom: 40px;
+        text-align: center;
+    }
+
+    .footer-text {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+</style>
+<script>
+    (function() {
+        // Immediate check to prevent flash of loader if already shown
+        if (sessionStorage.getItem('homeLoaded')) {
+            document.write('<style>#loading-screen { display: none !important; }</style>');
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('loading-screen');
+        const progressFill = document.getElementById('progress-fill');
+        const percentText = document.getElementById('percent-text');
+        const statusLabel = document.getElementById('status-label');
+
+        if (sessionStorage.getItem('homeLoaded')) {
+            if (loader) loader.style.display = 'none';
+        } else {
+            // Start Loading Animation
+            let progress = 0;
+            const statusMessages = ["সার্ভারের সাথে সংযোগ করা হচ্ছে", "ইউজার ডেটা সংগ্রহ করা হচ্ছে", "সেশন এনক্রিপ্ট করা হচ্ছে", "সব প্রস্তুত"];
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        if (loader) {
+                            loader.classList.add('hidden');
+                            sessionStorage.setItem('homeLoaded', 'true');
+                        }
+                    }, 500);
+                }
+                
+                if (progressFill) progressFill.style.width = progress + '%';
+                if (percentText) percentText.innerText = Math.floor(progress) + '%';
+                
+                // Update status text
+                if (statusLabel) {
+                    if (progress < 30) statusLabel.innerText = statusMessages[0];
+                    else if (progress < 60) statusLabel.innerText = statusMessages[1];
+                    else if (progress < 90) statusLabel.innerText = statusMessages[2];
+                    else statusLabel.innerText = statusMessages[3];
+                }
+            }, 50);
+        }
+    });
+</script>
+
+</head>
+<body class="bg-[#0A192F] text-white selection:bg-[#00E5FF]/30">
+    <div class="min-h-screen bg-[#0A192F] pb-24">
+        <!-- Header -->
+        <div class="sticky top-0 z-40 bg-[#112240]/80 backdrop-blur-md border-b border-[#233554] px-4 py-3">
+            <h1 class="text-2xl font-bold text-[#00E5FF] text-center tracking-tight">Fly Cash 🚀 টাকা উড়াও 💸 ✓</h1>
+        </div>
+
+        <!-- Content Block -->
+        
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-container">
+            <div class="logo-wrapper">
+                <div class="dashed-circle"></div>
+                <div class="main-logo">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.82v-1.91c-.39-.05-.77-.13-1.14-.24l-.19-.06-1.12.83-1.66-1.66.83-1.12-.06-.19c-.15-.46-.24-.94-.27-1.44H5.18v-2.35h1.91c.05-.39.13-.77.24-1.14l.06-.19-.83-1.12 1.66-1.66 1.12.83.19-.06c.46-.15.94-.24 1.44-.27V5.18h2.35v1.91c.39.05.77.13 1.14.24l.19.06 1.12-.83 1.66 1.66-.83 1.12.06.19c.15.46.24.94.27 1.44h1.91v2.35h-1.91c-.05.39-.13.77-.24 1.14l-.06.19.83 1.12-1.66 1.66-1.12-.83-.19.06c-.46.15-.94.24-1.44.27zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <h1 class="brand-name">Fly Cash</h1>
+            <p class="brand-slogan">নিরাপদ ইনকাম ইন্টারফেস</p>
+
+            <div class="progress-card">
+                <div class="progress-info">
+                    <div class="status-labels">
+                        <span class="status-label" id="status-label">লোড হচ্ছে...</span>
+                        <span class="status-label" style="color: #94a3b8;">সিস্টেম চেক</span>
+                    </div>
+                    <div class="percent-text" id="percent-text">0%</div>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loader-footer">
+            <p class="footer-text">© 2026 Fly Cash  </p>
+        </div>
+    </div>
+
+    <!-- User Profile Section -->
+    <div class="px-4 py-6 bg-[#112240] border-b border-[#233554]">
+        <div class="flex items-center gap-4">
+            <!-- Avatar -->
+            <div class="w-16 h-16 rounded-full border-4 border-[#00E5FF] bg-gradient-to-br from-[#0A192F] to-[#00E5FF] flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-lg cursor-pointer overflow-hidden">
+                
+                    
+                
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-1">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-white"></h2>
+                    <span class="text-[#00E5FF]">✓</span>
+                </div>
+                
+            </div>
+
+            <!-- Notification Bell -->
+            <button class="p-3 hover:bg-[#0A192F] rounded-full transition-colors">
+                <svg class="w-6 h-6 text-[#00E5FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="px-4 py-6">
+        <div class="bg-[#00E5FF] rounded-3xl p-8 text-[#0A192F] shadow-xl shadow-[#00E5FF]/20">
+            <p class="text-sm font-bold opacity-80 tracking-wide uppercase">মোট ব্যালেন্স</p>
+            <h3 class="text-5xl font-black mt-4">TK </h3>
+        </div>
+    </div>
+
+    <!-- Activity Feed (Live Withdrawal Ticker) -->
+    <div class="px-4 py-4">
+        <div class="bg-[#112240] rounded-2xl p-4 border border-[#233554] overflow-hidden relative h-16 flex items-center shadow-sm">
+            <div id="live-withdrawal-container" class="whitespace-nowrap absolute will-change-transform">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const names = ['Rahim', 'Karim', 'Sujon', 'Akash', 'Monir', 'Sabbir', 'Nusrat', 'Jannat', 'Priya', 'Riya', 'Admin', 'King', 'Lion', 'Tiger', 'Moon', 'Sun', 'Masud', 'Rana', 'Sohel', 'Bipul', 'Joy', 'Niloy', 'Sagor', 'Roton', 'Mina', 'Tina'];
+            
+            function initTicker() {
+                const container = document.getElementById('live-withdrawal-container');
+                if (!container) return;
+                
+                const wrapper = container.parentElement;
+
+                function getRandomInt(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+                function startAnimation() {
+                    // Generate Content
+                    const name = names[Math.floor(Math.random() * names.length)];
+                    const maskedName = name.substring(0, Math.min(3, name.length)) + "***";
+                    const amount = getRandomInt(1200, 10000); // 1200 to 10000
+                    
+                    const text = `🎉 <span class="text-[#00E5FF] font-bold">${maskedName}</span> <span class="text-slate-400">মাত্র</span> <span class="text-[#00E5FF] font-black">TK ${amount}</span> <span class="text-slate-400">উইথড্র করেছেন</span>`;
+                    
+                    container.innerHTML = text;
+                    
+                    // Calculate positions
+                    const wrapperWidth = wrapper.offsetWidth;
+                    const contentWidth = container.offsetWidth;
+                    
+                    // Start from right (outside)
+                    const startPos = wrapperWidth;
+                    // End at left (outside)
+                    const endPos = -contentWidth;
+                    
+                    // Reset styling for new run
+                    container.style.transition = 'none';
+                    container.style.transform = `translateX(${startPos}px)`;
+                    
+                    // Force reflow
+                    void container.offsetHeight;
+                    
+                    // Animate
+                    const duration = 6000 + Math.random() * 2000; // 6-8 seconds
+                    container.style.transition = `transform ${duration}ms linear`;
+                    container.style.transform = `translateX(${endPos}px)`;
+                    
+                    // Queue next animation
+                    setTimeout(startAnimation, duration);
+                }
+
+                // Initial Start
+                startAnimation();
+            }
+
+            // Run when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTicker);
+            } else {
+                initTicker();
+            }
+        })();
+    </script>
+
+    <!-- Stats Grid -->
+    <div class="px-4 py-6 space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Total Tasks -->
+            <div class="stat-card">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400 font-bold">মোট টাস্ক</span>
+                </div>
+                <p class="text-2xl font-black text-white"></p>
+            </div>
+
+            <!-- Total Referrals -->
+            <div class="stat-card">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20a9 9 0 0118 0v2H6v-2z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400 font-bold">মোট রেফার</span>
+                </div>
+                <p class="text-2xl font-black text-white"></p>
+            </div>
+
+            <!-- Ads Watched -->
+            <div class="stat-card">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400 font-bold">অ্যাড দেখা হয়েছে</span>
+                </div>
+                <p class="text-2xl font-black text-white"></p>
+            </div>
+
+            <!-- Bonus Balance -->
+            <div class="stat-card">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400 font-bold">বোনাস ব্যালেন্স</span>
+                </div>
+                <p class="text-2xl font-black text-white">TK 0.00</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Check-in Section -->
+    <div class="px-4 py-6">
+        <div class="bg-[#112240] rounded-3xl p-6 border border-[#233554] shadow-xl relative overflow-hidden">
+            <!-- Glow Effect -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#00E5FF]/10 blur-3xl rounded-full -mr-10 -mt-10"></div>
+            
+            <div class="relative z-10">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-black text-white mb-1">Daily Bonus</h2>
+                    <div class="flex items-center justify-center gap-2 text-[#00E5FF] font-bold">
+                        <span>🎁 দৈনিক বোনাস</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">প্রতিদিন বোনাস সংগ্রহ করুন ➡️ Claim your bonus every day</p>
+                </div>
+
+                <div class="flex items-center justify-between mb-4 px-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">📅</span>
+                        <span class="text-sm font-bold text-white">Progress</span>
+                    </div>
+                    <div class="bg-[#00E5FF]/10 text-[#00E5FF] px-4 py-1 rounded-xl border border-[#00E5FF]/20 text-xs font-black">
+                        /7 দিন
+                    </div>
+                </div>
+
+                <!-- 7 Days Grid -->
+                <div class="grid grid-cols-4 gap-3 mb-8">
+                    
+                </div>
+
+                
+                    <button id="claimCheckinBtn" onclick="claimDailyBonus()" class="w-full bg-[#00E5FF] text-[#0A192F] py-4 rounded-2xl font-black text-sm shadow-xl shadow-[#00E5FF]/30 hover:scale-[0.98] transition-transform active:scale-95">
+                        এখনই ক্লেইম করুন (দিন )
+                    </button>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function claimDailyBonus() {
+            const btn = document.getElementById('claimCheckinBtn');
+            if (!btn) return;
+            
+            btn.disabled = false;
+        btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> প্রসেসিং হচ্ছে...</span>';
+
+            try {
+                const response = await fetch('/claim-daily-checkin/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': 'tsVULnBVjUf2BOgF7rsTwwp9SyKpyrb0w3hBUBqZZWVQbHeljCFAE43qDEXdsYR5',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Success alert using Telegram WebApp if available
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.showAlert(data.message, () => {
+                            window.location.reload();
+                        });
+                    } else {
+                        alert(data.message);
+                        window.location.reload();
+                    }
+                } else {
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.showAlert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                    btn.disabled = false;
+                    btn.innerText = 'Claim Now (Day )';
+                }
+            } catch (error) {
+                console.error('Check-in error:', error);
+                alert('An error occurred. Please try again.');
+                btn.disabled = false;
+                btn.innerText = 'Claim Now (Day )';
+            }
+        }
+    </script>
+
+    <!-- Mystery Box Section -->
+    
+
+    <!-- Leaderboard Button Section -->
+    <div class="px-4 py-6">
+        <a href="/leaderboard/" class="block">
+            <div class="bg-gradient-to-r from-[#112240] to-[#1d3557] rounded-3xl p-6 border border-[#233554] shadow-xl hover:border-[#00E5FF] transition-all group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-[#00E5FF]/10 rounded-2xl flex items-center justify-center text-[#00E5FF] group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a.75.75 0 00-1.336 0l-4.243 8.486a.75.75 0 00.188.882L10.5 18.332V21a.75.75 0 001.5 0v-2.668l8.056-4.267a.75.75 0 00.188-.882l-4.243-8.486a.75.75 0 00-1.336 0L12 10.364l-2.165-5.667z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-white">লিডারবোর্ড 🏆</h2>
+                            <p class="text-xs text-slate-400 mt-1">সেরা ইনকামারদের তালিকা দেখুন</p>
+                        </div>
+                    </div>
+                    <div class="text-[#00E5FF]">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- GigaPub Script -->
+    <script src="https://ad.gigapub.tech/script?id="></script>
+    <!-- Adsmone Script: load only if GigaPub ID is present -->
+    
+
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#112240]/90 backdrop-blur-lg border-t border-[#233554] px-2 py-3 z-50">
+        <div class="flex items-center justify-around max-w-lg mx-auto">
+            <!-- Home -->
+            <a href="javascript:void(0)" onclick="navTo('/')" class="nav-button active">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.707.707a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+                <span>হোম</span>
+            </a>
+
+            <!-- Task -->
+            <a href="javascript:void(0)" onclick="navTo('/tasks/')" class="nav-button ">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>টাস্ক</span>
+            </a>
+
+            <!-- Support -->
+            <a href="javascript:void(0)" onclick="navTo('/support/')" class="nav-button ">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"></path>
+                </svg>
+                <span>সাপোর্ট</span>
+            </a>
+
+            <!-- Referral -->
+            <a href="javascript:void(0)" onclick="navTo('/referral/')" class="nav-button ">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>রেফার</span>
+            </a>
+
+            <!-- Wallet -->
+            <a href="javascript:void(0)" onclick="navTo('/withdraw/')" class="nav-button ">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H5a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                <span>ওয়ালেট</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
